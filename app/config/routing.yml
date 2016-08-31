@@ -1,0 +1,14 @@
+acme_test:
+    resource: "@AcmeTestBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+pirate:
+    resource: "@PirateBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation
