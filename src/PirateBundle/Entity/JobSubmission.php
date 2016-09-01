@@ -51,7 +51,7 @@ class JobSubmission
      * @var string
      *
      * @ORM\Column(name="status", type="string", length=255)
-     * @Assert\NotBlank()
+     * 
      */
     private $status;
     

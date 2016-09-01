@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 use SendGrid;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class JobController extends Controller
 {
@@ -28,7 +29,7 @@ class JobController extends Controller
     	
     	//\Doctrine\Common\Util\Debug::dump($repository);
     	
-    	$job = $repository->findOneByEmail("despode@gmail.com");
+    	$job = $repository->findOneByEmail("ja@ja.com");
     	
     	print "<pre>"; print_r($job); print "</pre>";
     	
@@ -44,15 +45,17 @@ class JobController extends Controller
      */
     public function newAction(Request $request)
     {
+    	
     	$jobSubmission = new JobSubmission();
     	$jobSubmission->setTitle('Write a title here');
     	$jobSubmission->setDescription('Write a description here');
-    	
+    	$jobSubmission->setStatus('QUO');
     
     	$form = $this->createFormBuilder($jobSubmission)
     	->add('title', TextType::class)
     	->add('description', TextType::class)
     	->add('email', TextType::class)
+    	->add('status', HiddenType::class)
     	->add('save', SubmitType::class, array('label' => 'Submit the job ad'))
     	->getForm();
     
@@ -99,7 +102,7 @@ class JobController extends Controller
     	
     }
     
-    public function sendEmailUsingSendgridApi($to, $title) {
+    private function sendEmailUsingSendgridApi($to, $title) {
     	$sendgrid = new SendGrid("testerko", "abcdefgh2");
     	$email    = new SendGrid\Email();
     	
