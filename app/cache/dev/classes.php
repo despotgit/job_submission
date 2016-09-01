@@ -5146,6 +5146,17 @@ throw new \InvalidArgumentException('Exception/Throwable expected, got '.gettype
 }
 $data = array('class'=> get_class($e),'message'=> $e->getMessage(),'code'=> $e->getCode(),'file'=> $e->getFile().':'.$e->getLine(),
 );
+if ($e instanceof \SoapFault) {
+if (isset($e->faultcode)) {
+$data['faultcode'] = $e->faultcode;
+}
+if (isset($e->faultactor)) {
+$data['faultactor'] = $e->faultactor;
+}
+if (isset($e->detail)) {
+$data['detail'] = $e->detail;
+}
+}
 $trace = $e->getTrace();
 foreach ($trace as $frame) {
 if (isset($frame['file'])) {
@@ -6716,7 +6727,7 @@ return $this->connections;
 }
 public function getConnections()
 {
-$connections = array();
+$connections = [];
 foreach ($this->connections as $name => $id) {
 $connections[$name] = $this->getService($id);
 }
@@ -6766,7 +6777,7 @@ return $this->managers;
 }
 public function getManagers()
 {
-$dms = array();
+$dms = [];
 foreach ($this->managers as $name => $id) {
 $dms[$name] = $this->getService($id);
 }

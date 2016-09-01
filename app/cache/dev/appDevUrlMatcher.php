@@ -105,15 +105,6 @@ class appDevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
 
         }
 
-        // acmetest_default_index
-        if (rtrim($pathinfo, '/') === '') {
-            if (substr($pathinfo, -1) !== '/') {
-                return $this->redirect($pathinfo.'/', 'acmetest_default_index');
-            }
-
-            return array (  '_controller' => 'AcmeTestBundle\\Controller\\DefaultController::indexAction',  '_route' => 'acmetest_default_index',);
-        }
-
         // pirate_default_index
         if (rtrim($pathinfo, '/') === '') {
             if (substr($pathinfo, -1) !== '/') {
@@ -123,9 +114,17 @@ class appDevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
             return array (  '_controller' => 'PirateBundle\\Controller\\DefaultController::indexAction',  '_route' => 'pirate_default_index',);
         }
 
-        // pirate_job_submit
-        if ($pathinfo === '/job/submit') {
-            return array (  '_controller' => 'PirateBundle\\Controller\\JobController::submitAction',  '_route' => 'pirate_job_submit',);
+        if (0 === strpos($pathinfo, '/job')) {
+            // pirate_job_another
+            if ($pathinfo === '/job/another') {
+                return array (  '_controller' => 'PirateBundle\\Controller\\JobController::anotherAction',  '_route' => 'pirate_job_another',);
+            }
+
+            // pirate_job_new
+            if ($pathinfo === '/job/new') {
+                return array (  '_controller' => 'PirateBundle\\Controller\\JobController::newAction',  '_route' => 'pirate_job_new',);
+            }
+
         }
 
         // homepage

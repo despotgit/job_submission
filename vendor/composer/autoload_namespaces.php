@@ -6,8 +6,11 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Unirest' => array($vendorDir . '/mashape/unirest-php/lib'),
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
+    'Smtpapi' => array($vendorDir . '/sendgrid/smtpapi/lib'),
     'SensioLabs\\Security' => array($vendorDir . '/sensiolabs/security-checker'),
+    'SendGrid' => array($vendorDir . '/sendgrid/sendgrid/lib'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'Doctrine\\ORM\\' => array($vendorDir . '/doctrine/orm/lib'),
     'Doctrine\\DBAL\\' => array($vendorDir . '/doctrine/dbal/lib'),
@@ -15,5 +18,4 @@ return array(
     'Doctrine\\Common\\Inflector\\' => array($vendorDir . '/doctrine/inflector/lib'),
     'Doctrine\\Common\\Collections\\' => array($vendorDir . '/doctrine/collections/lib'),
     'Doctrine\\Common\\Annotations\\' => array($vendorDir . '/doctrine/annotations/lib'),
-    'Doctrine\\Common\\' => array($vendorDir . '/doctrine/common/lib'),
 );

@@ -54,7 +54,9 @@ class ComposerStaticInitb82f97cdf82207d6cccfcbd6127982e6
         ),
         'D' => 
         array (
+            'Doctrine\\Instantiator\\' => 22,
             'Doctrine\\Common\\Cache\\' => 22,
+            'Doctrine\\Common\\' => 16,
             'Doctrine\\Bundle\\DoctrineCacheBundle\\' => 36,
             'Doctrine\\Bundle\\DoctrineBundle\\' => 31,
         ),
@@ -149,9 +151,17 @@ class ComposerStaticInitb82f97cdf82207d6cccfcbd6127982e6
         array (
             0 => __DIR__ . '/..' . '/incenteev/composer-parameter-handler',
         ),
+        'Doctrine\\Instantiator\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator',
+        ),
         'Doctrine\\Common\\Cache\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache',
+        ),
+        'Doctrine\\Common\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common',
         ),
         'Doctrine\\Bundle\\DoctrineCacheBundle\\' => 
         array (
@@ -168,6 +178,13 @@ class ComposerStaticInitb82f97cdf82207d6cccfcbd6127982e6
     );
 
     public static $prefixesPsr0 = array (
+        'U' => 
+        array (
+            'Unirest' => 
+            array (
+                0 => __DIR__ . '/..' . '/mashape/unirest-php/lib',
+            ),
+        ),
         'T' => 
         array (
             'Twig_' => 
@@ -177,9 +194,17 @@ class ComposerStaticInitb82f97cdf82207d6cccfcbd6127982e6
         ),
         'S' => 
         array (
+            'Smtpapi' => 
+            array (
+                0 => __DIR__ . '/..' . '/sendgrid/smtpapi/lib',
+            ),
             'SensioLabs\\Security' => 
             array (
                 0 => __DIR__ . '/..' . '/sensiolabs/security-checker',
+            ),
+            'SendGrid' => 
+            array (
+                0 => __DIR__ . '/..' . '/sendgrid/sendgrid/lib',
             ),
         ),
         'P' => 
@@ -214,10 +239,6 @@ class ComposerStaticInitb82f97cdf82207d6cccfcbd6127982e6
             'Doctrine\\Common\\Annotations\\' => 
             array (
                 0 => __DIR__ . '/..' . '/doctrine/annotations/lib',
-            ),
-            'Doctrine\\Common\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/doctrine/common/lib',
             ),
         ),
     );

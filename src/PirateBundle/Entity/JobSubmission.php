@@ -2,6 +2,8 @@
 
 namespace PirateBundle\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -25,6 +27,7 @@ class JobSubmission
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $email;
 
@@ -32,6 +35,7 @@ class JobSubmission
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $title;
 
@@ -39,9 +43,18 @@ class JobSubmission
      * @var string
      *
      * @ORM\Column(name="description", type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $description;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="status", type="string", length=255)
+     * @Assert\NotBlank()
+     */
+    private $status;
+    
 
     /**
      * Get id
@@ -121,4 +134,31 @@ class JobSubmission
     {
         return $this->description;
     }
+    
+    
+    
+    /**
+     * Set status
+     *
+     * @param string $status
+     * @return JobSubmission
+     */
+    public function setStatus($status)
+    {
+    	$this -> status = $status;
+        
+    	return $this;
+    }
+    
+    /**
+     * Get status
+     *
+     * @return string
+     */
+    public function getStatus()
+    {
+    	return $this -> status;
+    }
+    
+    
 }

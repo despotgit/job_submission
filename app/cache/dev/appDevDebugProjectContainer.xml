@@ -32,8 +32,8 @@
     <parameter key="database_password">null</parameter>
     <parameter key="mailer_transport">smtp</parameter>
     <parameter key="mailer_host">127.0.0.1</parameter>
-    <parameter key="mailer_user">null</parameter>
-    <parameter key="mailer_password">null</parameter>
+    <parameter key="mailer_user">testerko</parameter>
+    <parameter key="mailer_password">abcdefgh2</parameter>
     <parameter key="secret">6354b4910b350a8abe1f989cc2a020b7aab05d17</parameter>
     <parameter key="locale">en</parameter>
     <parameter key="controller_resolver.class">Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver</parameter>
@@ -374,8 +374,8 @@
     <parameter key="swiftmailer.mailer.default.transport.smtp.encryption">null</parameter>
     <parameter key="swiftmailer.mailer.default.transport.smtp.port">25</parameter>
     <parameter key="swiftmailer.mailer.default.transport.smtp.host">127.0.0.1</parameter>
-    <parameter key="swiftmailer.mailer.default.transport.smtp.username">null</parameter>
-    <parameter key="swiftmailer.mailer.default.transport.smtp.password">null</parameter>
+    <parameter key="swiftmailer.mailer.default.transport.smtp.username">testerko</parameter>
+    <parameter key="swiftmailer.mailer.default.transport.smtp.password">abcdefgh2</parameter>
     <parameter key="swiftmailer.mailer.default.transport.smtp.auth_mode">null</parameter>
     <parameter key="swiftmailer.mailer.default.transport.smtp.timeout">30</parameter>
     <parameter key="swiftmailer.mailer.default.transport.smtp.source_ip">null</parameter>
@@ -1785,7 +1785,7 @@
       <argument type="collection">
         <argument type="service">
           <service class="Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider" public="false">
-            <argument>57c755fbc1ffe8.84718210</argument>
+            <argument>57c84e97d0b1e9.39237962</argument>
           </service>
         </argument>
       </argument>
@@ -1914,7 +1914,7 @@
         <argument type="service">
           <service class="Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener" public="false">
             <argument type="service" id="security.token_storage"/>
-            <argument>57c755fbc1ffe8.84718210</argument>
+            <argument>57c84e97d0b1e9.39237962</argument>
             <argument type="service" id="monolog.logger.security" on-invalid="null"/>
             <argument type="service" id="security.authentication.manager"/>
           </service>
@@ -2264,6 +2264,12 @@
       <argument type="service">
         <service class="Symfony\Bridge\Doctrine\ContainerAwareEventManager" public="false">
           <argument type="service" id="service_container"/>
+          <call method="addEventListener">
+            <argument type="collection">
+              <argument>loadClassMetadata</argument>
+            </argument>
+            <argument type="service" id="doctrine.orm.default_listeners.attach_entity_listeners"/>
+          </call>
         </service>
       </argument>
       <argument type="collection"/>
@@ -2301,11 +2307,14 @@
       </call>
     </service>
     <service id="doctrine.orm.default_entity_listener_resolver" class="Doctrine\ORM\Mapping\DefaultEntityListenerResolver"/>
+    <service id="doctrine.orm.default_listeners.attach_entity_listeners" class="Doctrine\ORM\Tools\AttachEntityListenersListener">
+      <tag name="doctrine.event_listener" event="loadClassMetadata"/>
+    </service>
     <service id="doctrine.orm.default_manager_configurator" class="Doctrine\Bundle\DoctrineBundle\ManagerConfigurator">
       <argument type="collection"/>
       <argument type="collection"/>
     </service>
-    <service id="doctrine.orm.default_entity_manager" class="Doctrine\ORM\EntityManager">
+    <service id="doctrine.orm.default_entity_manager" class="Doctrine\ORM\EntityManager" lazy="true">
       <argument type="service" id="doctrine.dbal.default_connection"/>
       <argument type="service">
         <service class="Doctrine\ORM\Configuration" public="false">
@@ -2810,10 +2819,10 @@
               </argument>
             </argument>
             <call method="setUsername">
-              <argument>null</argument>
+              <argument>testerko</argument>
             </call>
             <call method="setPassword">
-              <argument>null</argument>
+              <argument>abcdefgh2</argument>
             </call>
             <call method="setAuthMode">
               <argument>null</argument>
