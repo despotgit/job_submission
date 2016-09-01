@@ -151,7 +151,7 @@ class JobSubmission
     }
     
     /**
-     * Get status
+     * Get status: Can be QUO (initial value), PUB (published ), PRI (private)
      *
      * @return string
      */

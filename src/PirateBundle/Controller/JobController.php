@@ -27,11 +27,9 @@ class JobController extends Controller
     	$repository = $this->getDoctrine()
     	->getRepository('PirateBundle:JobSubmission');
     	
-    	//\Doctrine\Common\Util\Debug::dump($repository);
+    	$jobs = $repository->findByEmail("ja@ja.com");
     	
-    	$job = $repository->findOneByEmail("ja@ja.com");
-    	
-    	print "<pre>"; print_r($job); print "</pre>";
+    	print "<pre>"; print_r($jobs); print "</pre>";
     	
     	return new Response("<html><body> hey </body></html>");
     	
@@ -45,6 +43,7 @@ class JobController extends Controller
      */
     public function newAction(Request $request)
     {
+    	//email:PirateBundle\Entity\JobSubmission:private is how the email field sent in form is called
     	
     	$jobSubmission = new JobSubmission();
     	$jobSubmission->setTitle('Write a title here');
@@ -61,21 +60,48 @@ class JobController extends Controller
     
     	$form -> handleRequest($request);
     	
-    	//This is the second request, with POST parameters
+    	//This is not the inital request for this page (probably from the same page), 
+    	//but the subsequent one, with POST-ed POST parameters from form
     	if ($form->isSubmitted() && $form->isValid()) {
-    		// $form->getData() holds the submitted values
-    		// but, the original `$task` variable has also been updated
-    		$js = $form->getData();
-    	
-    		print "<pre>"; print_r($js); print "</pre>";
     		
+    		// $form->getData() holds the submitted values
+    		$js = $form->getData();
+    		
+    		//Get the email
+    		$email = $js -> getEmail();
+    		
+    		//Fetch the repository for entity JobSubmission
+    		$repository = $this->getDoctrine()
+    		->getRepository('PirateBundle:JobSubmission');
+    		 
+    		//Get all entities with that email
+    		$jobs = $repository -> findByEmail($email);
+    		
+    		$detector_of_approval = false;
+    		foreach ($jobs as $job) {
+    			if ($job -> getStatus() == "PUB") {
+    				$detector_of_approval = true;
+    				break;
+    			}
+    		}
+    		
+    		//print "<pre>"; print_r($jobs); print "</pre>";
+    		
+    		if($detector_of_approval) {
+    			echo "There is at least one approved job submission associated with this email.";
+    			$js -> setStatus("PUB");
+    		} else {
+    			echo "There are currently no approved job submissions associated with this email.";
+    			$this -> sendEmailUsingSendgridApi($email, "Job submission moderation", "Your job submission is being moderated");
+    			$js -> setStatus("PRI");
+    		}
+    		
+    		//Persist the entity
     		$em = $this -> getDoctrine() -> getManager();
     		$em -> persist($js);
     		$em -> flush();
     		
-    		//$this -> sendEmail("despotovic_vladimir@yahoo.ie", "testing from my symfony");
     		
-    		$this -> sendEmailUsingSendgridApi("despotovic_vladimir@yahoo.ie", "testing");
     		
     	    return new Response("New job submitted");
     	
@@ -87,29 +113,17 @@ class JobController extends Controller
     	));
     }
     
-    
-    
-    public function sendEmail($email, $title) {
+    private function sendEmailUsingSendgridApi($to, $subject, $body) {
+    	//Delete this return when done with other things, not to waste emails
+    	return;
     	
-		$message = \Swift_Message::newInstance()
-		  ->setFrom('pirates@gmail.com')
-		  ->setTo($email)
-		  ->setSubject('Job submission')
-		  ->setBody("Job ad with title " . $title . " has been submitted and waiting for approval.");
-		
-		$this->get('mailer')->send($message);
-    	
-    	
-    }
-    
-    private function sendEmailUsingSendgridApi($to, $title) {
     	$sendgrid = new SendGrid("testerko", "abcdefgh2");
     	$email    = new SendGrid\Email();
     	
     	$email -> addTo("despotovic_vladimir@yahoo.ie")
     	-> setFrom("pirates@gmail.com")
-    	-> setSubject("Job submission")
-    	-> setHtml("Job has been submitted.");
+    	-> setSubject($subject)
+    	-> setHtml($body);
     	
     	//Send the confirmation notification email
     	$email_sending_result = $sendgrid -> send($email);
