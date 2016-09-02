@@ -61,8 +61,8 @@ class JobController extends Controller
     	//Validate the form and check if it is submitted yet or not
     	$form -> handleRequest($request);
     	
-    	//Check if this is infact not the inital request for this page (probably from the same page), 
-    	//but the subsequent one, with POST-ed POST parameters from the above form
+    	//Check if this is NOT the inital request for this page (probably from the same page), 
+    	//but the subsequent one, with valid POST-ed POST parameters from the above form
     	if ($form->isSubmitted() && $form->isValid()) {
     		
     		// $form->getData() holds the submitted values
@@ -79,20 +79,27 @@ class JobController extends Controller
     		$jobs = $repository -> findByEmail($email);
     		
     		$detector_of_approval = false;
+    		
+    		//If we want to check only for jobs with this email that are actually approved (status=PUB), we would do it like this:
+    		/*
     		foreach ($jobs as $job) {
     			if ($job -> getStatus() == "PUB") {
     				$detector_of_approval = true;
     				break;
     			}
     		}
+    		*/
     		
-    		//print "<pre>"; print_r($jobs); print "</pre>";
+    		//Checking if there is at least one job with this email, already submitted for approval somewhere int he past:
+    		if (count($jobs) > 0) {
+    			$detector_of_approval = true;
+    		}
     		
     		if($detector_of_approval) {
-    			echo "There is at least one approved job submission associated with this email.";
+    			echo "There is at least one job submission associated with this email.";
     			$js -> setStatus("PUB");
     		} else {
-    			echo "There are currently no approved job submissions associated with this email.";
+    			echo "There are currently no job submissions associated with this email.";
     			$this -> sendEmailUsingSendgridApi($email, "Job submission moderation", "Your job submission is being moderated");
     			$js -> setStatus("PRI");
     		}
@@ -101,7 +108,6 @@ class JobController extends Controller
     		$em = $this -> getDoctrine() -> getManager();
     		$em -> persist($js);
     		$em -> flush();
-    		
     		
     		
     	    return new Response("New job submitted");
