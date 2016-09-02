@@ -105,16 +105,23 @@ class JobController extends Controller
     			$detector_of_approval = true;
     		}
     		
+    		//Persist the entity in any case, store it in database
+    		$em = $this -> getDoctrine() -> getManager();
+    		$em -> persist($js);
+    		$em -> flush();
+    		
     		if($detector_of_approval) {
     			echo "There is at least one job submission associated with this email.";
     			$js -> setStatus("PUB");
     		} else {
+    			$js -> setStatus("PRI");
+    			
     			echo "There are currently no job submissions associated with this email.";
     			
     			$messageToSubmitter = "Your job submission with title " . $js -> getTitle() . " is being moderated.";
     			
-    			$approvalUrl = "";
-    			$markAsSpamUrl = "";
+    			$approvalUrl = "http://localhost:8000/job/approve/" . $js -> getId();
+    			$markAsSpamUrl = "http://localhost:8000/job/markspam/" . $js -> getId();
     			
     			$messageToModerator = "Hello, Your action is needed. There was a new job submission on the party of person who has never 
     					before submitted a job. The job title is: " . $js -> getTitle() . " and the job description is: " . $js -> getDescription() . ". 
@@ -124,10 +131,10 @@ class JobController extends Controller
     			$this -> sendEmail($email, "Job submission moderation notification", $messageToSubmitter);
     			$this -> sendEmail("despotovic_vladimir@yahoo.ie", "Job submission moderation needed", $messageToModerator);
     			
-    			$js -> setStatus("PRI");
+    			
     		}
     		
-    		//Persist the entity in any case, store it in database
+    		//Change the status of the job submission
     		$em = $this -> getDoctrine() -> getManager();
     		$em -> persist($js);
     		$em -> flush();
@@ -197,7 +204,7 @@ class JobController extends Controller
     
     private function sendEmail($to, $subject, $body) {
     	//Delete this return when done with other things, not to waste emails
-    	return;
+    	
     	
     	$sendgrid = new SendGrid("testerko", "abcdefgh2");
     	$email    = new SendGrid\Email();
