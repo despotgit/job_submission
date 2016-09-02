@@ -43,13 +43,13 @@ class JobController extends Controller
      */
     public function newAction(Request $request)
     {
-    	//email:PirateBundle\Entity\JobSubmission:private is how the email field sent in form is called
-    	
+    	//Make the entity to be used to fill the below form
     	$jobSubmission = new JobSubmission();
     	$jobSubmission->setTitle('Write a title here');
     	$jobSubmission->setDescription('Write a description here');
     	$jobSubmission->setStatus('QUO');
     
+    	//Create the form with proper fields to be filled with above entity's values
     	$form = $this->createFormBuilder($jobSubmission)
     	->add('title', TextType::class)
     	->add('description', TextType::class)
@@ -58,10 +58,11 @@ class JobController extends Controller
     	->add('save', SubmitType::class, array('label' => 'Submit the job ad'))
     	->getForm();
     
+    	//Validate the form and check if it is submitted yet or not
     	$form -> handleRequest($request);
     	
-    	//This is not the inital request for this page (probably from the same page), 
-    	//but the subsequent one, with POST-ed POST parameters from form
+    	//Check if this is infact not the inital request for this page (probably from the same page), 
+    	//but the subsequent one, with POST-ed POST parameters from the above form
     	if ($form->isSubmitted() && $form->isValid()) {
     		
     		// $form->getData() holds the submitted values
@@ -105,12 +106,13 @@ class JobController extends Controller
     		
     	    return new Response("New job submitted");
     	
-    	}
+    	} else {
     	
-    	//Render the form in any case
-    	return $this->render('default/new.html.twig', array(
-    			'form' => $form->createView(),
-    	));
+	    	//Render the form for the first time
+	    	return $this->render('default/new.html.twig', array(
+	    			'form' => $form->createView(),
+	    	));
+    	}
     }
     
     private function sendEmailUsingSendgridApi($to, $subject, $body) {
