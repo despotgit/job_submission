@@ -24,16 +24,26 @@ class JobController extends Controller
      */
     public function anotherAction()
     {
-    	$repository = $this->getDoctrine()
-    	->getRepository('PirateBundle:JobSubmission');
+    	$repository = $this -> getDoctrine() -> getRepository('PirateBundle:JobSubmission');
     	
-    	$jobs = $repository->findByEmail("ja@ja.com");
+    	//$jobs = $repository -> findByEmail("despode@gmail.com");
+    	$job = $repository -> findOneById(3);
     	
-    	print "<pre>"; print_r($jobs); print "</pre>";
+    	print "<pre>job is: "; print_r($job); print "</pre>";
+    	
+    	if(is_null($job)) echo "Job doesn't exist"; return new Response("The job with this id doesn't exist");
+    	
+    	$job -> setStatus("TAI");
+    	
+    	
+    	
+    	$em = $this -> getDoctrine() -> getManager();
+    	$em -> persist($job);
+    	$em -> flush();
+    	
+    	//print "<pre>"; print_r($jobs); print "</pre>";
     	
     	return new Response("<html><body> hey </body></html>");
-    	
-    	
     	
     }
     
@@ -100,17 +110,30 @@ class JobController extends Controller
     			$js -> setStatus("PUB");
     		} else {
     			echo "There are currently no job submissions associated with this email.";
-    			$this -> sendEmailUsingSendgridApi($email, "Job submission moderation", "Your job submission is being moderated");
+    			
+    			$messageToSubmitter = "Your job submission with title " . $js -> getTitle() . " is being moderated.";
+    			
+    			$approvalUrl = "";
+    			$markAsSpamUrl = "";
+    			
+    			$messageToModerator = "Hello, Your action is needed. There was a new job submission on the party of person who has never 
+    					before submitted a job. The job title is: " . $js -> getTitle() . " and the job description is: " . $js -> getDescription() . ". 
+    					Please either approve this job by going to this url: " . $approvalUrl . " or mark it as spam by
+    					going to this url: " . $markAsSpamUrl . " . Thank you.";
+    			
+    			$this -> sendEmail($email, "Job submission moderation notification", $messageToSubmitter);
+    			$this -> sendEmail("despotovic_vladimir@yahoo.ie", "Job submission moderation needed", $messageToModerator);
+    			
     			$js -> setStatus("PRI");
     		}
     		
-    		//Persist the entity
+    		//Persist the entity in any case, store it in database
     		$em = $this -> getDoctrine() -> getManager();
     		$em -> persist($js);
     		$em -> flush();
     		
     		
-    	    return new Response("New job submitted");
+    	    return new Response("The job ad has been submitted");
     	
     	} else {
     	
@@ -121,14 +144,65 @@ class JobController extends Controller
     	}
     }
     
-    private function sendEmailUsingSendgridApi($to, $subject, $body) {
+    /**
+     * @Route("/job/approve/{jobId}")
+     *
+     */
+    public function approveJobSubmissionAction($jobId) {
+    	
+    	$repository = $this -> getDoctrine() -> getRepository('PirateBundle:JobSubmission');
+    	 
+    	$job = $repository -> findOneById($jobId);
+    	 
+    	//Check if the job with this id exists in the database
+    	if(is_null($job)) {
+    		echo "Job doesn't exist"; return new Response("The job with id " . $jobId . " doesn't exist");
+    	} else {
+    	
+	    	$job -> setStatus("PUB");
+	    	 
+	    	$em = $this -> getDoctrine() -> getManager();
+	    	$em -> persist($job);
+	    	$em -> flush();
+	    	 
+	    	return new Response("<html><body> Job with id " . $jobId . " has been published </body></html>");
+    	}
+    	
+    }
+    
+    /**
+     * @Route("/job/markspam/{jobId}")
+     *
+     */
+    public function markAsSpamJobSubmissionAction($jobId) {
+    	 
+    	$repository = $this -> getDoctrine() -> getRepository('PirateBundle:JobSubmission');
+    	
+    	$job = $repository -> findOneById($jobId);
+    	
+    	//Check if the job with this id exists in the database
+    	if(is_null($job)) {
+    		echo "Job doesn't exist"; return new Response("The job with id " . $jobId . " doesn't exist");
+    	} else {
+    	
+	    	$job -> setStatus("SPA");
+	    	
+	    	$em = $this -> getDoctrine() -> getManager();
+	    	$em -> persist($job);
+	    	$em -> flush();
+    	
+    	    return new Response("<html><body> Job with id " . $jobId . " has been marked as spam </body></html>"); 
+    	}
+    }
+    
+    private function sendEmail($to, $subject, $body) {
     	//Delete this return when done with other things, not to waste emails
     	return;
     	
     	$sendgrid = new SendGrid("testerko", "abcdefgh2");
     	$email    = new SendGrid\Email();
     	
-    	$email -> addTo("despotovic_vladimir@yahoo.ie")
+    	$email -> addTo($to)
     	-> setFrom("pirates@gmail.com")
     	-> setSubject($subject)
     	-> setHtml($body);
@@ -137,6 +211,7 @@ class JobController extends Controller
     	$email_sending_result = $sendgrid -> send($email);
     	
     }
+    
 }
 
 ?>
